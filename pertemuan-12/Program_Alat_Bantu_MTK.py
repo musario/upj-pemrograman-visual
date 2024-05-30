@@ -1,12 +1,13 @@
 import tkinter as tk
 from tkinter import messagebox
+from tkinter import *
 
 class MathVisualApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Aplikasi Edukasi Matematika")
         
-        self.canvas = tk.Canvas(root, width=400, height=300, bg='white')
+        self.canvas = tk.Canvas(root, width=800, height=600, bg='white')
         self.canvas.pack()
 
         self.control_frame = tk.Frame(root)
@@ -18,13 +19,44 @@ class MathVisualApp:
         self.create_color_selector()
         self.create_input_fields()
         self.create_draw_button()
+
+    def show_line_inputs(self):
+        self.inputs["start_x"].grid()
+        self.inputs["start_y"].grid()
+        self.inputs["end_x"].grid()
+        self.inputs["end_y"].grid()
+        self.inputs["width"].grid()
+        if 'radius' in self.inputs:
+            self.remove_input_field("radius")
+            self.add_input_field("Tebal garis:", "width", 2, 0)
+
+    def show_rectangle_inputs(self):
+        self.inputs["start_x"].grid()
+        self.inputs["start_y"].grid()
+        self.inputs["end_x"].grid()
+        self.inputs["end_y"].grid()
+        self.inputs["width"].grid()
+        if 'radius' in self.inputs:
+            self.remove_input_field("radius")
+            self.add_input_field("Tebal garis:", "width", 2, 0)
+
+    def show_circle_inputs(self):
+        self.inputs["start_x"].grid()
+        self.inputs["start_y"].grid()
+        self.add_input_field("Jari-Jari:", "radius", 2, 0)
+        self.inputs["radius"].grid()
+        self.inputs["width"].grid()
+        # self.remove_input_field("end_x")
+        # self.remove_input_field("end_y")
         
     def create_shape_selector(self):
         tk.Label(self.control_frame, text="Pilih Objek:").grid(row=0, column=0, sticky="w")
 
         shapes = [("Garis", "line"), ("Lingkaran", "circle"), ("Persegi Panjang", "rectangle")]
-        for text, value in shapes:
-            tk.Radiobutton(self.control_frame, text=text, variable=self.shape_var, value=value).grid(row=0, column=shapes.index((text, value))+1, sticky="w")
+
+        tk.Radiobutton(self.control_frame, text=shapes[0][0], variable=self.shape_var, value=shapes[0][1], command=self.show_line_inputs).grid(row=0, column=0, sticky="w")
+        tk.Radiobutton(self.control_frame, text=shapes[1][0], variable=self.shape_var, value=shapes[1][1], command=self.show_circle_inputs).grid(row=0, column=1, sticky="w")
+        tk.Radiobutton(self.control_frame, text=shapes[2][0], variable=self.shape_var, value=shapes[2][1], command=self.show_rectangle_inputs).grid(row=0, column=2, sticky="w")
 
     def create_color_selector(self):
         self.color_var = tk.StringVar(value="black")
@@ -35,6 +67,7 @@ class MathVisualApp:
 
         tk.Label(self.control_frame, text="Warna Isi:").grid(row=1, column=2, sticky="w")
         self.create_color_menu(self.fill_color_var, 1, 3)
+
 
     def create_color_menu(self, variable, row, column):
         colors = ["red", "green", "blue", "yellow", "magenta", "white"]
@@ -55,7 +88,7 @@ class MathVisualApp:
 
         self.update_input_fields()
 
-        self.shape_var.trace("w", lambda *args: self.update_input_fields())
+        # self.shape_var.trace_add("w", lambda *args: self.update_input_fields())
 
     def add_input_field(self, label, key, row, column, default_value=""):
         tk.Label(self.inputs_frame, text=label).grid(row=row, column=column * 2, sticky="w")
@@ -76,26 +109,36 @@ class MathVisualApp:
         elif shape == "circle":
             self.show_circle_inputs()
 
-    def show_line_inputs(self):
-        self.inputs["start_x"].grid()
-        self.inputs["start_y"].grid()
-        self.inputs["end_x"].grid()
-        self.inputs["end_y"].grid()
-        self.inputs["width"].grid()
+    # def show_line_inputs(self):
+    #     self.inputs["start_x"].grid()
+    #     self.inputs["start_y"].grid()
+    #     self.inputs["end_x"].grid()
+    #     self.inputs["end_y"].grid()
+    #     self.inputs["width"].grid()
+    #     if 'radius' in self.inputs:
+    #         self.remove_input_field("radius")
 
-    def show_rectangle_inputs(self):
-        self.inputs["start_x"].grid()
-        self.inputs["start_y"].grid()
-        self.inputs["end_x"].grid()
-        self.inputs["end_y"].grid()
-        self.inputs["width"].grid()
+    # def show_rectangle_inputs(self):
+    #     self.inputs["start_x"].grid()
+    #     self.inputs["start_y"].grid()
+    #     self.inputs["end_x"].grid()
+    #     self.inputs["end_y"].grid()
+    #     self.inputs["width"].grid()
+    #     if 'radius' in self.inputs:
+    #         self.remove_input_field("radius")
 
-    def show_circle_inputs(self):
-        self.inputs["start_x"].grid()
-        self.inputs["start_y"].grid()
-        self.add_input_field("Jari-Jari:", "radius", 2, 0)
-        self.inputs["radius"].grid()
-        self.inputs["width"].grid()
+    # def show_circle_inputs(self):
+    #     self.inputs["start_x"].grid()
+    #     self.inputs["start_y"].grid()
+    #     self.add_input_field("Jari-Jari:", "radius", 2, 0)
+    #     self.inputs["radius"].grid()
+    #     self.inputs["width"].grid()
+    #     self.remove_input_field("end_x")
+    #     self.remove_input_field("end_y")
+
+    def remove_input_field(self, key):
+        if key in self.inputs:
+            self.inputs[key].grid_remove()
 
     def create_draw_button(self):
         draw_button = tk.Button(self.control_frame, text="Gambar", command=self.draw_shape)
